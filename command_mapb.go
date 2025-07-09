@@ -8,21 +8,31 @@ import (
 )
 
 func commandMapb(config *Config) error {
+	var body []byte
+	var err error
+
 	if config.Previous == "" {
         fmt.Println("you're on the first page")
         return nil
     }
-	
-	res, err := http.Get(config.Previous)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-        return err
-    }
+	data, ok := cache.Get(config.Previous)
+	if ok {
+		body = data
+	} else {
+		res, err := http.Get(config.Previous)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+
+		bodyBytes, err := io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		cache.Add(config.Previous, bodyBytes)
+		body = bodyBytes
+	}
 
 	locations := LocationResponse{}
 	err = json.Unmarshal(body, &locations)

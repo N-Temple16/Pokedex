@@ -8,16 +8,26 @@ import (
 )
 
 func commandMap(config *Config) error {
-	res, err := http.Get(config.Next)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
+	var body []byte
+	var err error
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-        return err
-    }
+	data, ok := cache.Get(config.Next)
+	if ok {
+		body = data
+	} else {
+		res, err := http.Get(config.Next)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+
+		bodyBytes, err := io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		cache.Add(config.Next, bodyBytes)
+		body = bodyBytes
+	}
 
 	locations := LocationResponse{}
 	err = json.Unmarshal(body, &locations)
@@ -30,7 +40,6 @@ func commandMap(config *Config) error {
 	}
 
 	config.Next = locations.Next
-	fmt.Println("Next URL:", config.Next)
 	if locations.Previous != nil {
 		config.Previous = *locations.Previous
 	} else {
