@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func commandMapb(config *Config) error {
+func commandMapb(config *Config, strings []string) error {
 	var body []byte
 	var err error
 

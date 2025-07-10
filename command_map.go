@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func commandMap(config *Config) error {
+func commandMap(config *Config, strings []string) error {
 	var body []byte
 	var err error
 

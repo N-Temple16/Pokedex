@@ -25,11 +25,12 @@ func startRepl() {
         }
 
         commandName := words[0]
+        location := words[1:]
 
         command, exists := getCommands()[commandName]
 
         if exists {
-            err := command.callback(config)
+            err := command.callback(config, location)
             if err != nil {
                 fmt.Println(err)
             }
@@ -55,7 +56,7 @@ func cleanInput(text string) []string {
 type cliCommand struct {
     name        string
     description string
-    callback    func(config *Config) error
+    callback    func(config *Config, strings []string) error
 }
 
 type Config struct {
@@ -73,6 +74,18 @@ type LocationResponse struct {
 	Next     string     `json:"next"`
 	Previous *string    `json:"previous"`
 	Results  []Location `json:"results"`
+}
+
+type SpecifiedLocation struct {
+	Encounters []PokemonEncounters `json:"pokemon_encounters"`
+}
+
+type PokemonEncounters struct {
+	Pokemon Pokemon `json:"pokemon"`
+}
+
+type Pokemon struct {
+	Name string `json:"name"`
 }
 
 func getCommands() map[string]cliCommand {
@@ -96,6 +109,11 @@ func getCommands() map[string]cliCommand {
             name:        "mapb",
             description: "Displays 20 previous locations",
             callback:    commandMapb,
+        },
+        "explore": {
+            name:        "explore",
+            description: "Displays list of all Pokemon located in an area",
+            callback:    commandExplore,
         },
     }   
 }
