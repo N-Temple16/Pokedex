@@ -85,8 +85,31 @@ type PokemonEncounters struct {
 }
 
 type Pokemon struct {
-	Name string `json:"name"`
+    BaseExperience int `json:"base_experience"`
+	Name   string `json:"name"`
+    Height int `json:"height"`
+    Weight int `json:"weight"`
+    Stats []PokemonStats `json:"stats"`
+    Types []PokemonTypes `json:"types"`
 }
+
+type PokemonStats struct {
+    BaseStat int `json:"base_stat"`
+    StatName StatNames `json:"stat"`
+}
+
+type StatNames struct {
+    Name string `json:"name"`
+}
+
+type PokemonTypes struct {
+    TypeName TypeNames `json:"type"`
+}
+
+type TypeNames struct {
+    Name string `json:"name"`
+}
+
 
 func getCommands() map[string]cliCommand {
     return map[string]cliCommand{
@@ -114,6 +137,21 @@ func getCommands() map[string]cliCommand {
             name:        "explore",
             description: "Displays list of all Pokemon located in an area",
             callback:    commandExplore,
+        },
+        "catch": {
+            name:        "catch",
+            description: "Catch and add a Pokemon to the Pokedex",
+            callback:    commandCatch,
+        },
+        "inspect": {
+            name:        "inspect",
+            description: "Inspect a caught Pokemon's information",
+            callback:    commandInspect,
+        },
+        "pokedex": {
+            name:        "pokedex",
+            description: "Displays all caught Pokemon",
+            callback:    commandPokedex,
         },
     }   
 }

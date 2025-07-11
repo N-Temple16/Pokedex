@@ -8,15 +8,15 @@ import (
 	"net/http"
 )
 
-func commandExplore(config *Config, strings []string) error {
+func commandExplore(config *Config, location []string) error {
 	var body []byte
 	var err error
 
-	if len(strings) == 0 {
+	if len(location) == 0 {
         return errors.New("you must provide a location to explore")
 	}
 
-	exploreLocation := "https://pokeapi.co/api/v2/location-area/" + strings[0]
+	exploreLocation := "https://pokeapi.co/api/v2/location-area/" + location[0]
 
 	data, ok := cache.Get(exploreLocation)
 	if ok {
@@ -42,7 +42,7 @@ func commandExplore(config *Config, strings []string) error {
 		return err
 	}
 
-	fmt.Printf("Exploring %s...\n", strings[0])
+	fmt.Printf("Exploring %s...\n", location[0])
 	fmt.Println("Found Pokemon:")
 
 	for _, poke := range pokemon.Encounters {
